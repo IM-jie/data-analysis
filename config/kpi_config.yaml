@@ -1,0 +1,85 @@
+# KPI指标配置
+kpi_metrics:
+  # 用户留存率
+  user_retention_rate:
+    sql_file: "user_retention.sql"
+    description: "用户留存率"
+    unit: "%"
+    data_type: "float"
+    threshold:
+      warning: 0.3
+      critical: 0.2
+    analysis:
+      - distribution
+      - trend
+      - anomaly
+    
+  # 转化率
+  conversion_rate:
+    sql_file: "conversion_rate.sql"
+    description: "转化率"
+    unit: "%"
+    data_type: "float"
+    threshold:
+      warning: 0.05
+      critical: 0.03
+    analysis:
+      - distribution
+      - trend
+      - anomaly
+  
+  # 日活跃用户数
+  daily_active_users:
+    sql_file: "daily_active_users.sql"
+    description: "日活跃用户数"
+    unit: "人"
+    data_type: "integer"
+    threshold:
+      warning: 10000
+      critical: 8000
+    analysis:
+      - distribution
+      - trend
+      - anomaly
+  
+  # 平均订单金额
+  average_order_value:
+    sql_file: "average_order_value.sql"
+    description: "平均订单金额"
+    unit: "元"
+    data_type: "float"
+    threshold:
+      warning: 200
+      critical: 150
+    analysis:
+      - distribution
+      - trend
+      - anomaly
+
+# 分析配置
+analysis_config:
+  # 分布分析配置
+  distribution:
+    bins: 20
+    outlier_method: "iqr"  # iqr, zscore, isolation_forest
+    
+  # 趋势分析配置
+  trend:
+    window_size: 7  # 移动平均窗口大小
+    seasonality: 30  # 季节性周期
+    
+  # 异常检测配置
+  anomaly:
+    method: "isolation_forest"  # isolation_forest, lof, one_class_svm
+    contamination: 0.1
+    threshold: 0.95
+
+# 报告配置
+report_config:
+  output_format: ["html", "pdf"]
+  charts:
+    - distribution_histogram
+    - trend_line
+    - anomaly_scatter
+    - correlation_matrix
+  auto_generate: true

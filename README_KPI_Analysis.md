@@ -44,6 +44,13 @@
 - **基于关联关系的异常检测**: 当关联关系发生变化时自动识别异常
 - **业务洞察生成**: 基于挖掘结果生成业务建议和洞察
 
+### 🗄️ ClickHouse数据库支持
+- **高性能数据查询**: 支持大规模KPI数据分析
+- **实时数据处理**: 支持实时指标监控和分析
+- **复杂SQL查询**: 支持复杂的分析查询和聚合
+- **数据导出功能**: 支持导出到Excel格式
+- **集成分析**: 与数据挖掘功能无缝集成
+
 ## 系统架构
 
 ```
@@ -120,6 +127,11 @@ python src/kpi_excel_analyzer.py your_kpi_data.xlsx --associations
 
 # 导出结果到Excel
 python src/kpi_excel_analyzer.py your_kpi_data.xlsx --export-excel results.xlsx
+
+# ClickHouse数据库分析
+python src/kpi_clickhouse_analyzer.py --table kpi_data --action analyze
+python src/kpi_clickhouse_analyzer.py --table kpi_data --action correlations --metrics project_count employee_count
+python src/kpi_clickhouse_analyzer.py --table kpi_data --action associations --metrics project_count test_case_count
 ```
 
 ### 2. 编程接口使用
@@ -194,6 +206,38 @@ anomalies = detector.detect_association_anomalies(new_data, column_info['metric_
 
 # 4. 生成洞察
 insights = detector.generate_anomaly_insights(anomalies)
+```
+
+#### ClickHouse数据库分析
+```python
+from src.kpi_clickhouse_analyzer import KPIClickHouseAnalyzer
+
+# 1. 初始化ClickHouse分析器
+analyzer = KPIClickHouseAnalyzer('config/clickhouse_config.yaml')
+
+# 2. 分析整个表
+results = analyzer.analyze_table(
+    table_name='kpi_data',
+    metric_columns=['project_count', 'employee_count', 'test_case_count']
+)
+
+# 3. 分析特定部门
+dept_results = analyzer.analyze_department(
+    table_name='kpi_data',
+    department_name='技术部'
+)
+
+# 4. 分析指标相关性
+corr_results = analyzer.analyze_correlations(
+    table_name='kpi_data',
+    metric_columns=['project_count', 'employee_count', 'test_case_count']
+)
+
+# 5. 进行关联关系挖掘
+association_results = analyzer.analyze_associations(
+    table_name='kpi_data',
+    metric_columns=['project_count', 'employee_count', 'test_case_count']
+)
 ```
 
 ### 3. Excel数据格式要求

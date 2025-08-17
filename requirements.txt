@@ -25,6 +25,10 @@ mlxtend>=0.22.0
 networkx>=3.0
 scipy>=1.12.0
 
+# 数据库连接
+clickhouse-connect>=0.7.0
+sqlalchemy>=2.0.0
+
 # 配置管理
 python-dotenv==1.0.0
 pyyaml==6.0.1

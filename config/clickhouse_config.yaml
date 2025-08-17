@@ -1,0 +1,43 @@
+# ClickHouse数据库配置
+clickhouse:
+  host: localhost
+  port: 8123
+  username: default
+  password: ""
+  database: default
+  secure: false
+  verify: true
+
+# 分析配置
+analysis:
+  correlation_threshold: 0.7
+  anomaly_threshold: 2.0
+  trend_threshold: 0.05
+
+# 数据挖掘配置
+data_mining:
+  min_support: 0.1
+  min_confidence: 0.5
+  min_lift: 1.2
+  mi_threshold: 0.3
+
+# 报告配置
+reporting:
+  output_dir: reports
+  template_dir: templates
+  include_charts: true
+  include_tables: true
+
+# 默认列名配置
+columns:
+  department_column: department_name
+  time_column: quarter
+  default_metrics:
+    - project_count
+    - employee_count
+    - test_case_count
+    - automated_test_count
+    - code_coverage
+    - bug_fix_rate
+    - delivery_rate
+    - customer_satisfaction

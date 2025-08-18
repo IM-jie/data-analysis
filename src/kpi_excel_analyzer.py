@@ -423,6 +423,16 @@ class KPIExcelAnalyzer:
             if anomaly_data:
                 anomaly_df = pd.DataFrame(anomaly_data)
                 anomaly_df.to_excel(writer, sheet_name='异常检测结果', index=False)
+
+            # 2.1 异常明细
+            details = analysis_results.get('anomaly_details', [])
+            if details:
+                details_df = pd.DataFrame(details)
+                # 对行号排序，便于回溯
+                sort_cols = [c for c in ['row', 'department', 'time', 'metric', 'method'] if c in details_df.columns]
+                if sort_cols:
+                    details_df = details_df.sort_values(sort_cols)
+                details_df.to_excel(writer, sheet_name='异常明细', index=False)
             
             # 3. 趋势分析结果
             trends = analysis_results.get('trends', {})

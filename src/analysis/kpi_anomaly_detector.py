@@ -403,7 +403,11 @@ class KPIComprehensiveAnalyzer:
         results['summary'] = self._generate_summary(data, department_column, metric_columns)
         
         # 异常检测
-        results['anomalies'] = self._detect_all_anomalies(data, metric_columns)
+        anomalies, anomaly_details = self._detect_all_anomalies(
+            data, metric_columns, department_column, time_columns
+        )
+        results['anomalies'] = anomalies
+        results['anomaly_details'] = anomaly_details
         
         # 趋势分析
         results['trends'] = self._analyze_all_trends(data, metric_columns, time_columns)
@@ -437,31 +441,90 @@ class KPIComprehensiveAnalyzer:
         return summary
     
     def _detect_all_anomalies(self, data: pd.DataFrame,
-                             metric_columns: List[str]) -> Dict[str, Any]:
-        """对所有指标进行异常检测"""
-        anomalies = {}
-        
+                             metric_columns: List[str],
+                             department_column: Optional[str],
+                             time_columns: Optional[List[str]]) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
+        """对所有指标进行异常检测，并返回明细"""
+        anomalies: Dict[str, Any] = {}
+        anomaly_details: List[Dict[str, Any]] = []
+
         for metric in metric_columns:
             if metric in data.columns:
-                metric_data = data[[metric]].dropna()
-                
+                # 保留原索引，便于回溯到原行
+                metric_series = data[metric]
+                metric_data = metric_series.to_frame().dropna()
+
                 if len(metric_data) > 0:
-                    # 使用多种方法检测异常
                     methods = ['isolation_forest', 'iqr', 'zscore']
                     metric_anomalies = {}
-                    
+
                     for method in methods:
                         try:
                             result = self.anomaly_detector.detect_anomalies(
                                 metric_data, method=method
                             )
                             metric_anomalies[method] = result
+
+                            # 生成明细
+                            flags = result.get('anomalies', [])
+                            scores = result.get('scores', [])
+                            # 对齐索引
+                            idx_list = list(metric_data.index)
+                            for pos, is_anom in enumerate(flags):
+                                if bool(is_anom):
+                                    idx = idx_list[pos]
+                                    row_no = int(idx) + 1 if isinstance(idx, (int, np.integer)) else None
+                                    department = None
+                                    if department_column and department_column in data.columns:
+                                        try:
+                                            department = data.at[idx, department_column]
+                                        except Exception:
+                                            department = None
+                                    # 时间列（若存在），取第一个非空时间值组合展示
+                                    time_value = None
+                                    if time_columns:
+                                        try:
+                                            times = []
+                                            for tcol in time_columns:
+                                                if tcol in data.columns:
+                                                    val = data.at[idx, tcol]
+                                                    if pd.notna(val):
+                                                        times.append(str(val))
+                                            if times:
+                                                time_value = ','.join(times[:3])  # 避免过长
+                                        except Exception:
+                                            time_value = None
+
+                                    value = data.at[idx, metric] if metric in data.columns else None
+                                    score = scores[pos] if pos < len(scores) else None
+                                    detail = {
+                                        'row': row_no,
+                                        'index': idx,
+                                        'department': department,
+                                        'time': time_value,
+                                        'metric': metric,
+                                        'method': method,
+                                        'value': float(value) if isinstance(value, (int, float, np.floating, np.integer)) and pd.notna(value) else value,
+                                        'score': float(score) if isinstance(score, (int, float, np.floating, np.integer)) and score is not None else score
+                                    }
+                                    anomaly_details.append(detail)
+
                         except Exception as e:
                             logger.warning(f"异常检测失败 {metric} - {method}: {e}")
-                    
+
                     anomalies[metric] = metric_anomalies
-        
-        return anomalies
+
+        # 按严重程度排序（若有分数）
+        def severity_key(d: Dict[str, Any]):
+            sc = d.get('score')
+            try:
+                return -abs(float(sc)) if sc is not None else 0.0
+            except Exception:
+                return 0.0
+
+        anomaly_details.sort(key=severity_key)
+
+        return anomalies, anomaly_details
     
     def _analyze_all_trends(self, data: pd.DataFrame,
                            metric_columns: List[str],

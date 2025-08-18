@@ -30,7 +30,7 @@ def example_1_connect_clickhouse():
             host='localhost',
             port=8123,
             username='default',
-            password='',
+            password='Dxt456789',
             database='default'
         )
         

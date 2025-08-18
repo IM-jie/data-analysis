@@ -20,7 +20,7 @@ class ClickHouseConnector:
                  host: str = 'localhost',
                  port: int = 8123,
                  username: str = 'default',
-                 password: str = '',
+                 password: str = 'Dxt456789',
                  database: str = 'default',
                  secure: bool = False,
                  verify: bool = True,
@@ -67,7 +67,7 @@ class ClickHouseConnector:
             )
             
             # 使用SQLAlchemy引擎（用于复杂查询）
-            connection_string = f"clickhouse+clickhouse-connect://{self.username}:{self.password}@{self.host}:{self.port}/{self.database}"
+            connection_string = f"clickhousedb://{self.username}:{self.password}@{self.host}:{self.port}/{self.database}"
             self.engine = create_engine(connection_string)
             
             logger.info(f"成功连接到ClickHouse数据库: {self.host}:{self.port}/{self.database}")
@@ -131,8 +131,7 @@ class ClickHouseConnector:
     def execute_query(self, query: str) -> pd.DataFrame:
         """执行SQL查询并返回DataFrame"""
         try:
-            result = self.client.query(query)
-            df = result.df()
+            df = self.client.query_df(query)
             logger.info(f"查询执行成功，返回 {len(df)} 行数据")
             return df
         except Exception as e:

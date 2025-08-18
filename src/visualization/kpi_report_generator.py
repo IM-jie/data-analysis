@@ -331,6 +331,7 @@ class KPIReportGenerator:
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'data_summary': analysis_results.get('summary', {}),
             'anomalies': analysis_results.get('anomalies', {}),
+            'anomaly_details': analysis_results.get('anomaly_details', []),
             'trends': analysis_results.get('trends', {}),
             'recommendations': analysis_results.get('recommendations', []),
             'charts': charts
@@ -595,6 +596,43 @@ class KPIReportGenerator:
                 {{ chart_html | safe }}
             </div>
             {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- 异常明细表 -->
+        {% if anomaly_details %}
+        <div class="section">
+            <h2>🧾 异常明细</h2>
+            <p>下表列出了检测到的异常点，包含行号、部门、时间、指标、检测方法、数值及分数（若有）。</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>行号</th>
+                        <th>部门</th>
+                        <th>时间</th>
+                        <th>指标</th>
+                        <th>方法</th>
+                        <th>数值</th>
+                        <th>分数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in anomaly_details[:500] %}
+                    <tr>
+                        <td>{{ d.row if d.row is not none else d.index }}</td>
+                        <td>{{ d.department if d.department is not none else '' }}</td>
+                        <td>{{ d.time if d.time is not none else '' }}</td>
+                        <td>{{ d.metric }}</td>
+                        <td>{{ d.method }}</td>
+                        <td>{{ d.value }}</td>
+                        <td>{{ '%.4f'|format(d.score) if d.score is not none else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if anomaly_details|length > 500 %}
+            <div class="alert alert-info">仅显示前500条异常明细，完整明细请导出为Excel查看。</div>
             {% endif %}
         </div>
         {% endif %}

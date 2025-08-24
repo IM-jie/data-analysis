@@ -1,0 +1,37 @@
+analysis_parameters:
+  correlation_threshold: 0.6
+  min_confidence: 0.6
+  min_lift: 1.2
+  min_support: 0.05
+dimension_fields:
+- project_type
+- project_level
+- product_line
+- product_type
+- test_owner
+- test_owner_org
+field_mapping:
+  automated_cases: 自动化执行用例数
+  effort_hours: 投入工时
+  executed_cases: 执行用例数
+  product_line: 产品线
+  product_type: 产品类型
+  project_id: 项目编号
+  project_level: 项目级别
+  project_name: 项目名称
+  project_type: 项目类型
+  related_bugs: 关联缺陷
+  test_owner: 测试负责人
+  test_owner_org: 测试负责人所属组织架构
+metric_fields:
+- executed_cases
+- automated_cases
+- related_bugs
+- effort_hours
+reporting:
+  include_charts: true
+  include_tables: true
+  output_directory: reports
+  output_format:
+  - pdf
+  - html

@@ -1,0 +1,105 @@
+# 可配置项目数据Apriori分析配置文件
+
+# 字段映射配置 (英文字段名 -> 中文显示名)
+field_mapping:
+  project_name: "项目名称"
+  project_id: "项目编号"
+  project_type: "项目类型"
+  project_level: "项目级别"
+  product_line: "产品线"
+  product_type: "产品类型"
+  test_owner: "测试负责人"
+  test_owner_org: "测试负责人所属组织架构"
+  executed_cases: "执行用例数"
+  automated_cases: "自动化执行用例数"
+  related_bugs: "关联缺陷"
+  effort_hours: "投入工时"
+  # 可以根据实际数据字段进行扩展
+  # custom_field_1: "自定义字段1"
+  # custom_field_2: "自定义字段2"
+
+# 维度字段配置 (用于关联规则挖掘的分类字段)
+dimension_fields:
+  - "project_type"
+  - "project_level"
+  - "product_line"
+  - "product_type"
+  - "test_owner"
+  - "test_owner_org"
+  # 添加更多维度字段
+  # - "custom_dimension_field"
+
+# 指标字段配置 (用于数值分析的字段)
+metric_fields:
+  - "executed_cases"
+  - "automated_cases"
+  - "related_bugs"
+  - "effort_hours"
+  # 添加更多指标字段
+  # - "custom_metric_field"
+
+# Apriori算法参数配置
+analysis_parameters:
+  min_support: 0.05       # 最小支持度：规则在数据中出现的最小频率 (0.01-0.3)
+  min_confidence: 0.6     # 最小置信度：规则的可信程度 (0.5-0.9)
+  min_lift: 1.2          # 最小提升度：规则的有效性指标 (1.0-3.0)
+  correlation_threshold: 0.6  # 相关性分析阈值 (0.3-0.8)
+  
+# 高级分析参数
+advanced_parameters:
+  # 标签分类参数
+  labeling_confidence_threshold: 0.7  # 用于标签分类的置信度阈值
+  anomaly_score_weights:
+    rule_violation_penalty: 0.3      # 违反规则的惩罚权重
+    anomaly_flag_penalty: 0.5        # 异常标记的惩罚权重
+    rule_compliance_bonus: -0.1      # 规则遵循的奖励权重
+  
+  # 异常检测参数
+  high_risk_threshold: 2.0            # 高风险异常评分阈值
+  medium_risk_threshold: 1.0          # 中风险异常评分阈值
+
+# 报告生成配置
+reporting:
+  output_format:          # 支持的输出格式
+    - "pdf"
+    - "html"
+  output_directory: "reports"     # 报告输出目录
+  include_charts: true            # 是否包含图表
+  include_tables: true            # 是否包含统计表格
+  
+  # PDF报告特定配置
+  pdf_options:
+    page_size: "A4"
+    font_size: 10
+    include_cover_page: true
+    
+  # HTML报告特定配置  
+  html_options:
+    responsive_design: true
+    interactive_charts: true
+    
+# 数据质量检查配置
+data_quality:
+  min_records: 10                    # 最少记录数
+  max_missing_rate: 0.3              # 最大缺失值比例
+  required_fields:                   # 必需字段
+    - "project_type"
+    - "project_level"
+  
+  # 字段类型验证
+  field_types:
+    dimension_fields: ["object", "category"]
+    metric_fields: ["int64", "float64"]
+
+# 性能优化配置
+performance:
+  max_rules: 1000                    # 最大关联规则数
+  parallel_processing: false         # 是否启用并行处理
+  memory_efficient: true             # 是否启用内存优化模式
+  
+# 输出详细程度配置
+verbosity:
+  console_output: "INFO"             # 控制台输出级别 (DEBUG, INFO, WARNING, ERROR)
+  log_to_file: true                  # 是否记录到日志文件
+  detailed_rules: true               # 是否输出详细的规则信息
+  show_progress: true                # 是否显示进度信息

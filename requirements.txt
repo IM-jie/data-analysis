@@ -22,13 +22,11 @@ statsmodels>=0.14.5
 # 数据挖掘和关联分析
 mlxtend>=0.22.0
 networkx>=3.0
-scipy>=1.12.0
 
 # 数据库连接
 clickhouse-connect==0.8.18
-sqlalchemy>=2.0.0
 
-# 配置管理
+# 配置管理和文件处理
 python-dotenv==1.0.0
 pyyaml==6.0.1
 
@@ -36,5 +34,14 @@ pyyaml==6.0.1
 loguru==0.7.2
 tqdm==4.66.1
 
+# PDF报告生成
+reportlab>=4.0.0
+
 # Web框架（可选，用于创建分析报告）
 streamlit==1.28.1
+
+# 字体处理（用于PDF中文支持）
+fonttools>=4.0.0
+
+# JSON处理增强（可选）
+orjson>=3.8.0

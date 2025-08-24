@@ -1,0 +1,30 @@
+analysis_parameters:
+  correlation_threshold: 0.7
+  min_confidence: 0.7
+  min_lift: 1.5
+  min_support: 0.03
+dimension_fields:
+- proj_type
+- proj_level
+- prod_line
+field_mapping:
+  auto_cases: 自动化用例数
+  bug_count: 缺陷数量
+  prod_line: 产品线
+  proj_id: 项目编号
+  proj_level: 项目级别
+  proj_name: 项目名称
+  proj_type: 项目类型
+  test_cases: 测试用例数
+  work_hours: 工作小时
+metric_fields:
+- test_cases
+- auto_cases
+- bug_count
+- work_hours
+reporting:
+  include_charts: true
+  include_tables: true
+  output_directory: custom_reports
+  output_format:
+  - html

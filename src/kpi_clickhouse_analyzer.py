@@ -69,9 +69,9 @@ class KPIClickHouseAnalyzer:
         return {
             'clickhouse': {
                 'host': 'localhost',
-                'port': 8123,
+                'port': 18123,
                 'username': 'default',
-                'password': '',
+                'password': 'Dxt456789',
                 'database': 'default',
                 'secure': False
             },

@@ -28,7 +28,7 @@ def example_1_connect_clickhouse():
         # 连接ClickHouse数据库
         connector = ClickHouseConnector(
             host='localhost',
-            port=8123,
+            port=18123,
             username='default',
             password='Dxt456789',
             database='default'
@@ -81,7 +81,7 @@ def example_2_create_sample_data():
             bug_fix_rate Float32,
             delivery_rate Float32,
             customer_satisfaction Float32,
-            created_at DateTime DEFAULT now()
+            created_at DateTime
         ) ENGINE = MergeTree()
         ORDER BY (department_name, quarter)
         """

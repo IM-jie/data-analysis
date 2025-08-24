@@ -528,9 +528,14 @@ class KPIComprehensiveAnalyzer:
     
     def _analyze_all_trends(self, data: pd.DataFrame,
                            metric_columns: List[str],
-                           time_columns: List[str]) -> Dict[str, Any]:
+                           time_columns: Optional[List[str]]) -> Dict[str, Any]:
         """分析所有指标的趋势"""
         trends = {}
+        
+        # 如果没有时间列，跳过趋势分析
+        if not time_columns:
+            logger.info("没有时间列，跳过趋势分析")
+            return trends
         
         for metric in metric_columns:
             if metric in data.columns:

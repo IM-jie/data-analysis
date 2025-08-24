@@ -18,7 +18,7 @@ class ClickHouseConnector:
     
     def __init__(self, 
                  host: str = 'localhost',
-                 port: int = 8123,
+                 port: int = 18123,
                  username: str = 'default',
                  password: str = 'Dxt456789',
                  database: str = 'default',
@@ -305,9 +305,9 @@ class ClickHouseConnector:
             WITH stats AS (
                 SELECT 
                     AVG({metric_name}) as mean_value,
-                    STDDEV({metric_name}) as std_value
+                    sum({metric_name}) as std_value
                 FROM {self.database}.{table_name}
-                WHERE {metric_name} IS NOT NULL
+                WHERE {table_name}.{metric_name} IS NOT NULL
             )
             SELECT 
                 t.*,
@@ -351,7 +351,7 @@ class ClickHouseConnector:
             query = f"""
             SELECT {', '.join(select_columns)}
             FROM {self.database}.{table_name}
-            WHERE {' AND '.join([f"{col} IS NOT NULL" for col in metric_columns])}
+            WHERE {' AND '.join([f"{table_name}.{col} IS NOT NULL" for col in metric_columns])}
             GROUP BY {department_column}, {time_column}
             ORDER BY {department_column}, {time_column}
             """
@@ -390,7 +390,7 @@ class ClickHouseConnector:
             query = f"""
             SELECT {', '.join(select_columns)}
             FROM {self.database}.{table_name}
-            WHERE {' AND '.join([f"{col} IS NOT NULL" for col in metric_columns])}
+            WHERE {' AND '.join([f"{table_name}.{col} IS NOT NULL" for col in metric_columns])}
             """
             
             if sample_size:
